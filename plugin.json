@@ -1,0 +1,103 @@
+{
+    "name": "ai-google",
+    "npmPackage": "@jpulse-net/plugin-ai-google",
+    "version": "1.0.0",
+    "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 3C12 5.5 18.5 12 21 12C18.5 12 12 18.5 12 21C12 18.5 5.5 12 3 12C5.5 12 12 5.5 12 3Z\"/></svg>",
+    "summary": "Google Gemini provider for the jPulse AI agent",
+    "description": "<p>Streams Gemini Interactions API completions into the <code>ai-core</code> turn loop. The API key is <code>type: \"password\"</code>: bulk reads return <code>********</code>, completions use <code>PluginModel.getSecret</code>, and Verify pings <code>/v1beta/models</code> without returning the key.</p>",
+    "author": "jPulse Team <team@jpulse.net>",
+    "jpulseVersion": ">=2.0.2",
+    "autoEnable": true,
+    "dependencies": {
+        "npm": {},
+        "plugins": {
+            "ai-core": {
+                "version": ">=1.0.0",
+                "npmPackage": "@jpulse-net/plugin-ai-core"
+            }
+        }
+    },
+    "config": {
+        "schema": [
+            {
+                "type": "help",
+                "content": "<p>Gemini API key for the site AI agent. Verify uses the value in the field (you do not need to Save first). The key never comes back in the Verify response.</p>",
+                "tab": "Provider"
+            },
+            {
+                "id": "apiKey",
+                "label": "API key",
+                "type": "password",
+                "default": "",
+                "placeholder": "AIza…",
+                "help": "Masked in GET config. Reveal on this form is audited. Completions read the stored value on the server.",
+                "tab": "Provider"
+            },
+            {
+                "id": "verifyApiKey",
+                "label": "Verify API key",
+                "type": "button",
+                "callback": "jPulse.plugins.aiGoogle.verifyApiKey",
+                "help": "Calls GET /v1beta/models with the key in this field. Unsaved is fine. The button never receives the stored-only value.",
+                "tab": "Provider"
+            },
+            {
+                "id": "model",
+                "label": "Default model",
+                "type": "select",
+                "default": "gemini-3.8-flash",
+                "options": [
+                    { "value": "gemini-3.8-flash", "label": "Gemini 3.8 Flash" },
+                    { "value": "gemini-3.5-flash-lite", "label": "Gemini 3.5 Flash-Lite" },
+                    { "value": "gemini-3.1-pro-preview", "label": "Gemini 3.1 Pro" }
+                ],
+                "help": "Used when Site Configuration → AI does not pick a model.",
+                "tab": "Provider"
+            },
+            {
+                "id": "endpoint",
+                "label": "API endpoint",
+                "type": "text",
+                "default": "https://generativelanguage.googleapis.com",
+                "help": "No trailing path. Completions POST {endpoint}/v1beta/interactions; Verify GET {endpoint}/v1beta/models.",
+                "tab": "Provider"
+            },
+            {
+                "id": "timeoutMs",
+                "label": "Request timeout (ms)",
+                "type": "number",
+                "default": 60000,
+                "min": 5000,
+                "max": 300000,
+                "step": 1000,
+                "help": "Abort one HTTP request after this many milliseconds.",
+                "tab": "Provider"
+            },
+            {
+                "id": "maxTokens",
+                "label": "Max output tokens",
+                "type": "number",
+                "default": 8192,
+                "min": 256,
+                "max": 65536,
+                "step": 256,
+                "tab": "Provider"
+            },
+            {
+                "type": "help",
+                "content": "<p>Leave empty to use the built-in prices (USD per million tokens, Standard paid tier, verified 2026-09-29 from the Gemini API pricing page). Gemini 3.8 Flash is the introductory rate through 2026-12-31 (input 0.75, output 3.75, cache read 0.075). From 2027-01-01 the standard rate is input 1.50, output 7.50, cache read 0.15 — put that in this override, or wait for a later plugin release. Cache write is 0: Google bills cache storage per hour, not as a per-request write token. An unknown model stores cost <code>null</code> — it must not cost $0.</p><p>To override, paste a JSON object. Keys are model ids. Each value needs four numbers — <code>input</code>, <code>output</code>, <code>cacheWrite</code>, <code>cacheRead</code> — in $/MTok.</p><p>Example:</p><p><code>{ \"gemini-3.8-flash\": { \"input\": 0.75, \"output\": 3.75, \"cacheWrite\": 0, \"cacheRead\": 0.075 } }</code></p><p>You may list several models. Invalid JSON is ignored and the built-in table stays in effect.</p>",
+                "tab": "Pricing"
+            },
+            {
+                "id": "priceTableOverride",
+                "label": "Price table override",
+                "type": "textarea",
+                "rows": 8,
+                "default": "",
+                "placeholder": "{\n  \"gemini-3.8-flash\": {\n    \"input\": 0.75,\n    \"output\": 3.75,\n    \"cacheWrite\": 0,\n    \"cacheRead\": 0.075\n  }\n}",
+                "help": "Empty = built-in table. JSON object of model-id → { input, output, cacheWrite, cacheRead } in USD per million tokens.",
+                "tab": "Pricing"
+            }
+        ]
+    }
+}
