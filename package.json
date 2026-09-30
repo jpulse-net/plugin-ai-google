@@ -3,12 +3,18 @@
     "version": "1.0.0",
     "type": "module",
     "description": "Google Gemini provider plugin for the jPulse AI agent",
-    "keywords": ["jpulse", "jpulse-plugin", "ai", "google", "gemini"],
+    "keywords": [
+        "jpulse",
+        "jpulse-plugin",
+        "ai",
+        "google",
+        "gemini"
+    ],
     "author": "jPulse Team <team@jpulse.net>",
     "license": "BSL-1.1",
     "repository": {
         "type": "git",
-        "url": "https://github.com/jpulse-net/plugin-ai-google.git"
+        "url": "git+https://github.com/jpulse-net/plugin-ai-google.git"
     },
     "publishConfig": {
         "registry": "https://npm.pkg.github.com",
